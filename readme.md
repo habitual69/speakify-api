@@ -1,7 +1,3 @@
-Sure! Here's the updated README.md with descriptions of the uses of all the endpoints:
-
----
-
 # Speakify API
 
 Speakify is a simple API that generates audio and subtitles from text using text-to-speech (TTS) technology. It provides an easy-to-use interface to convert text into audio files (in MP3 format) and corresponding subtitle files (in VTT format) with various available voices.

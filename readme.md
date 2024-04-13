@@ -1,8 +1,8 @@
-# Speakify API
+# <span style="color:#ff5733;">Speakify API</span>
 
-Speakify is a simple API that generates audio and subtitles from text using text-to-speech (TTS) technology. It provides an easy-to-use interface to convert text into audio files (in MP3 format) and corresponding subtitle files (in VTT format) with various available voices.
+<span style="color:#ff5733;">Speakify</span> is a simple API that generates audio and subtitles from text using text-to-speech (TTS) technology. It provides an easy-to-use interface to convert text into audio files (in MP3 format) and corresponding subtitle files (in VTT format) with various available voices.
 
-## Usage
+## <span style="color:#ff5733;">Usage</span>
 
 ## Base URL
 
@@ -50,7 +50,7 @@ curl -X POST https://your-domain.com/api/v1/convert \
 }
 ```
 
-## Installation
+## <span style="color:#ff5733;">Installation</span>
 
 1. Clone this repository:
 
@@ -71,10 +71,10 @@ pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-## Contributing
+## <span style="color:#ff5733;">Contributing</span>
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue for any improvements or bug fixes.
 
-## License
+## <span style="color:#ff5733;">License</span>
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

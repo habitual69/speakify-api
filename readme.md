@@ -4,6 +4,10 @@ Speakify is a simple API that generates audio and subtitles from text using text
 
 ## Usage
 
+## Base URL
+
+The base URL for the API is `https://speakify-api.vercel.app/api/v1`.
+
 ### Endpoints
 
 - `POST /api/v1/convert`: Generates audio and subtitles from input text.

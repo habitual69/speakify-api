@@ -25,9 +25,20 @@ ngrok_auth_token = os.getenv("NGROK_AUTH_TOKEN")
 if ngrok_auth_token:
     conf.get_default().auth_token = ngrok_auth_token
 
-# Start ngrok tunnel
-public_url = ngrok.connect(8000).public_url
-print(f"🚀 Speakify API Public URL: {public_url}")
+# Ensure ngrok tunnel is only created once
+try:
+    # Check if ngrok tunnel is already running
+    tunnels = ngrok.get_tunnels()
+    if tunnels:
+        public_url = tunnels[0].public_url
+        print(f"🔗 Reusing existing ngrok URL: {public_url}")
+    else:
+        # Create a new tunnel if none exists
+        public_url = ngrok.connect(8000).public_url
+        print(f"🚀 New ngrok URL: {public_url}")
+except Exception as e:
+    public_url = "Error: Could not start ngrok"
+    print(f"⚠️ ngrok error: {e}")
 
 @app.get("/")
 async def root():
@@ -54,4 +65,4 @@ async def root():
     }
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info", reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="info", reload=True)

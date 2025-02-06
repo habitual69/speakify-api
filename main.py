@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import router as api_router
 import uvicorn
-from pyngrok import ngrok
+from pyngrok import ngrok, conf
+import os
 
 app = FastAPI(title="Speakify", version="1.0.0")
 
@@ -18,6 +19,11 @@ app.add_middleware(
 )
 
 app.include_router(api_router, prefix="/api/v1")
+
+# Set ngrok auth token from environment variable
+ngrok_auth_token = os.getenv("NGROK_AUTH_TOKEN")
+if ngrok_auth_token:
+    conf.get_default().auth_token = ngrok_auth_token
 
 # Start ngrok tunnel
 public_url = ngrok.connect(8000).public_url

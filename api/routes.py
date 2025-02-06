@@ -8,6 +8,10 @@ import uuid
 
 router = APIRouter()
 
+@router.get("/voices")
+async def get_voices():
+    return voices
+
 @router.post("/convert")
 async def convert(background_tasks: BackgroundTasks, 
                  input_text: str = Form(...), 
@@ -47,6 +51,3 @@ async def get_audio(output_file: str):
     else:
         raise HTTPException(status_code=404, detail="Audio file not found.")
 
-@router.get("/voices")
-async def get_voices():
-    return voices

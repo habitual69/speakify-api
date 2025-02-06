@@ -1,13 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import router as api_router
+import uvicorn
+from pyngrok import ngrok
 
 app = FastAPI(title="Speakify", version="1.0.0")
 
 # Add CORS middleware
-origins = [
-"*"
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,6 +19,10 @@ app.add_middleware(
 
 app.include_router(api_router, prefix="/api/v1")
 
+# Start ngrok tunnel
+public_url = ngrok.connect(8000).public_url
+print(f"🚀 Speakify API Public URL: {public_url}")
+
 @app.get("/")
 async def root():
     return {
@@ -29,6 +33,7 @@ async def root():
         "Version": "1.0.0",
         "Docs": "/docs",
         "API": "/api/v1",
+        "Public URL": public_url,  # Return ngrok URL
         "Endpoints": {
             "/voices": "Get a list of available voices.",
             "/convert": "Generate audio and subtitles from text.",
@@ -43,5 +48,4 @@ async def root():
     }
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="info", reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info", reload=True)

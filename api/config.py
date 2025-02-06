@@ -1,15 +1,24 @@
+# config.py
 import os
 import json
 
-output = "/tmp"
-audio_folder = os.path.join(output, "audio")
-subtitles_folder = os.path.join(output, "subtitles")
+# Get the current directory (where config.py is located)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Create folders if they don't exist
-for folder in [audio_folder, subtitles_folder]:
-    if not os.path.exists(folder):
-        os.mkdir(folder)
+# Define audio folder path relative to the base directory
+audio_folder = os.path.join(BASE_DIR, "audio")
+
+# Create audio directory if it doesn't exist
+try:
+    os.makedirs(audio_folder, exist_ok=True)
+except Exception as e:
+    print(f"Error creating audio folder: {e}")
+    raise
 
 # Load available voices from voices.json
-with open("voices.json", "r") as f:
-    voices = json.load(f)
+try:
+    voice_file = os.path.join(BASE_DIR, "voices.json")
+    with open(voice_file, "r") as f:
+        voices = json.load(f)
+except FileNotFoundError:
+    voices = []

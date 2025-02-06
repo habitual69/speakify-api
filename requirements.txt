@@ -2,3 +2,5 @@ edge-tts
 fastapi
 uvicorn
 python-multipart
+pydantic
+ffmpeg-python

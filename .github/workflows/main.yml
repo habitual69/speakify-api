@@ -24,12 +24,12 @@ jobs:
         pip install -r requirements.txt
         pip install pyngrok  # Install ngrok
 
-    - name: Set ngrok Auth Token
+    - name: Configure ngrok Auth Token
       run: |
         ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
 
     - name: Run Speakify API with ngrok
       run: |
-        nohup python main.py &  # Run API in the background
-        sleep 10  # Wait for ngrok to generate URL
+        nohup python main.py &  # Run API in background
+        sleep 10  # Wait for ngrok to start
         curl http://127.0.0.1:8000  # Check if API is running

@@ -30,6 +30,6 @@ jobs:
 
     - name: Run Speakify API with ngrok
       run: |
-        nohup python main.py &  # Run API in background
+        python main.py   # Run API in background
         sleep 10  # Wait for ngrok to start
         curl http://127.0.0.1:8000  # Check if API is running

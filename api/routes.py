@@ -1,9 +1,8 @@
 # routes.py
 from fastapi import APIRouter, Form, HTTPException, BackgroundTasks
-from fastapi.responses import JSONResponse, FileResponse
-from .config import audio_folder, voices
-from .utils import process_text_chunks, get_task_status, TaskStatus
-import os
+from fastapi.responses import JSONResponse, StreamingResponse
+from .config import voices
+from .utils import process_text_chunks, get_task_status, TaskStatus, audio_files
 import uuid
 
 router = APIRouter()
@@ -45,9 +44,20 @@ async def check_status(task_id: str):
 
 @router.get("/audio/{output_file}")
 async def get_audio(output_file: str):
-    file_path = os.path.join(audio_folder, output_file)
-    if os.path.exists(file_path):
-        return FileResponse(file_path)
+    if output_file in audio_files:
+        audio_buffer = audio_files[output_file]
+        audio_buffer.seek(0)
+        
+        # Remove the file from memory after sending
+        def cleanup():
+            yield audio_buffer.getvalue()
+            audio_files.pop(output_file, None)
+        
+        return StreamingResponse(
+            cleanup(),
+            media_type="audio/mpeg",
+            headers={"Content-Disposition": f"attachment; filename={output_file}"}
+        )
     else:
         raise HTTPException(status_code=404, detail="Audio file not found.")
 

@@ -7,12 +7,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Define audio folder path relative to the base directory
 audio_folder = os.path.join(BASE_DIR, "audio")
+tmp_folder = os.path.join(BASE_DIR, "tmp")
 
-# Create audio directory if it doesn't exist
+# How long to keep files (in hours) before deletion
+file_retention_hours = 24  # Files will be deleted after 24 hours
+
+# Create audio and tmp directories if they don't exist
 try:
     os.makedirs(audio_folder, exist_ok=True)
+    os.makedirs(tmp_folder, exist_ok=True)
 except Exception as e:
-    print(f"Error creating audio folder: {e}")
+    print(f"Error creating folders: {e}")
     raise
 
 # Load available voices from voices.json

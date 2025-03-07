@@ -4,11 +4,12 @@ import edge_tts
 import asyncio
 from typing import Dict, List
 import re
+from io import BytesIO
 from .config import audio_folder
 
-
-# In-memory storage for task status
+# In-memory storage for task status and audio files
 task_status: Dict[str, Dict] = {}
+audio_files: Dict[str, BytesIO] = {}
 
 class TaskStatus:
     PENDING = "pending"
@@ -52,37 +53,33 @@ async def process_text_chunks(input_text: str, voice: str, output_name: str, tas
             "error": None
         }
 
-        # Create output filename
-        output_filename = f"{output_name.replace(' ', '_')}.mp3"
-        output_filepath = os.path.join(audio_folder, output_filename)
-        
-        # Ensure the directory exists
-        os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
-
-        # Process entire text at once
-        communicate = edge_tts.Communicate(input_text, voice)
-        total_bytes = 0
-        processed_bytes = 0
+        output_filename = f"{output_name.replace(' ', '_').replace('.mp3', '')}.mp3"
+        audio_buffer = BytesIO()
         
         # First pass to calculate total bytes
+        communicate = edge_tts.Communicate(input_text, voice)
+        total_bytes = 0
         async for chunk in communicate.stream():
             if chunk["type"] == "audio":
                 total_bytes += len(chunk["data"])
         
-        # Reset communicator for actual processing
+        # Second pass for actual processing with accurate progress
         communicate = edge_tts.Communicate(input_text, voice)
+        processed_bytes = 0
         
-        with open(output_filepath, "wb") as file:
-            async for chunk in communicate.stream():
-                if chunk["type"] == "audio":
-                    file.write(chunk["data"])
-                    processed_bytes += len(chunk["data"])
-                    
-                    # Update progress based on bytes processed
-                    if total_bytes > 0:
-                        progress = min(int((processed_bytes / total_bytes) * 100), 99)
-                        task_status[task_id]["progress"] = progress
+        async for chunk in communicate.stream():
+            if chunk["type"] == "audio":
+                audio_buffer.write(chunk["data"])
+                processed_bytes += len(chunk["data"])
+                
+                # Calculate progress as percentage of bytes processed
+                progress = min(int((processed_bytes / total_bytes) * 100), 99)
+                task_status[task_id]["progress"] = progress
 
+        # Store the audio buffer in memory
+        audio_buffer.seek(0)
+        audio_files[output_filename] = audio_buffer
+        
         # Update task status
         task_status[task_id].update({
             "status": TaskStatus.COMPLETED,

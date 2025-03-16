@@ -2,3 +2,6 @@ venv
 __pycache__
 audio
 .env
+co.py
+voices_updated.json
+voices_old.json
